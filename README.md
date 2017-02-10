@@ -1,20 +1,23 @@
-== Tracing Plane / OpenTracing ==
+
+# Tracing Plane / OpenTracing
 
 This repository provides some examples and implementations for using the Tracing Plane's context propagation specification in conjunction with OpenTracing.
 
-=== Why do this? ===
+### Why do this?
+
+Using the Tracing Plane / Baggage Buffers, you are able to easily specify your TraceContexts in a way that is extensible, portable, and most importantly, will automatically handle inconsistencies for you that will arise from merging contexts (eg, for spans with multiple parents)
 
 The Tracing Plane lets us construct arbitrary objects and efficiency pack them into a serialized format.  It has built-in semantics that enable a variety of different data types, and automatically supports correctly merging contexts if your tracing system allows multiple parents.
 
 See the [Tracing Plane GitHub](https://github.com/JonathanMace/tracingplane) for more information about the Tracing Plane
 
-=== Examples ===
+## Examples
 
-==== Tracing Plane Based Tracers ====
+### Tracing Plane Based Tracers
 
 [OpenTracingPlane.java](https://github.com/JonathanMace/tracingplane-opentracing/blob/master/src/main/java/brownsys/tracingplane/opentracing/OpenTracingPlane.java) provides a base implementation of an OpenTracing tracer that is backed by Baggage as its serialization format.  Non-binary carriers simply wrap the binary-encoded baggage (eg, in base64); for example, HTTP headers will set the `X-Baggage' field.
 
-==== Zipkin / Brave Tracer, backed by Tracing Plane ====
+### Zipkin / Brave Tracer, backed by Tracing Plane
 
 [ZipkinTracingPlaneTracer.java](https://github.com/JonathanMace/tracingplane-opentracing/blob/master/src/main/java/brownsys/tracingplane/opentracing/zipkin/ZipkinTracingPlaneTracer.java) is a concrete tracer implementation that wraps Zipkin's [Brave](https://github.com/openzipkin/brave) instrumentation library.  The tracer is an OpenTracing tracer (so, OpenTracing has generalized the instrumentation) and it's backed by Baggage (so, Baggage has generalized the context propagation), so the only component of Brave remaining is the concrete construction and backend-aggregation of span objects.
 
@@ -42,7 +45,9 @@ See the [Tracing Plane GitHub](https://github.com/JonathanMace/tracingplane) for
 	    ZipkinMetadata metadata = 0; // Zipkin disallows multiple parents and simply discards any excess metadata
 	} 
 
-==== OpenTracing Key-Value Pairs Baggage ====
+The code generate by Baggage Buffers is committed for curiosity's sake; for example, the generated [ZipkinContext.java](https://github.com/JonathanMace/tracingplane-opentracing/blob/master/target/generated-sources/brownsys/tracingplane/zipkin/ZipkinContext.java) and [ZipkinMetadata.java](https://github.com/JonathanMace/tracingplane-opentracing/blob/master/target/generated-sources/brownsys/tracingplane/zipkin/ZipkinMetadata.java)
+
+### OpenTracing Key-Value Pairs Baggage
 
 In addition to regular zipkin metadata, we have also provided a default implementation of OpenTracing's key-value pair Baggage (not to be confused with tracingplane Baggage which is a more generic concept)
 
@@ -55,11 +60,13 @@ In addition to regular zipkin metadata, we have also provided a default implemen
 	    map<string, string> fields = 0;
 	}
 
+The generated code can be seen at [OpenTracingBaggage.java](https://github.com/JonathanMace/tracingplane-opentracing/blob/master/target/generated-sources/brownsys/tracingplane/opentracing/OpenTracingBaggage.java)
 
-==== Generic Wrapper for Tracers ====
+
+### Generic Wrapper for Tracers
 
 TODO: a generic wrapper tracer that just byte-serializes the other tracer's contexts
 
-==== Pure Tracing Plane Tracer ====
+### Pure Tracing Plane Tracer
 
 TODO: a tracer that creates zipkin spans for the backend, but specifies its own metadata format and consistently handles relationships between spans, using just annotations for now :/
