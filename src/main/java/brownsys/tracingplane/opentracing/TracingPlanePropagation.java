@@ -1,4 +1,4 @@
-package edu.brown.cs.systems.tracingplane.opentracing;
+package brownsys.tracingplane.opentracing;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;

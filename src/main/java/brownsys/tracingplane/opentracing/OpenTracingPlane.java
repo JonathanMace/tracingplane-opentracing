@@ -1,9 +1,10 @@
-package edu.brown.cs.systems.tracingplane.opentracing;
+package brownsys.tracingplane.opentracing;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
-import edu.brown.cs.systems.tracingplane.opentracing.TracingPlanePropagation.Registry;
+import brownsys.tracingplane.opentracing.TracingPlanePropagation.Registry;
 import edu.brown.cs.systems.tracingplane.transit_layer.Baggage;
 import io.opentracing.References;
 import io.opentracing.Span;
@@ -204,6 +205,17 @@ public interface OpenTracingPlane {
             return this;
         }
 
+        @Override public abstract TracingPlaneSpan setTag(String key, String value);
+        @Override public abstract TracingPlaneSpan setTag(String key, boolean value);
+        @Override public abstract TracingPlaneSpan setTag(String key, Number value);
+        @Override public abstract TracingPlaneSpan log(Map<String, ?> fields);
+        @Override public abstract TracingPlaneSpan log(long timestampMicroseconds, Map<String, ?> fields);
+        @Override public abstract TracingPlaneSpan log(String event);
+        @Override public abstract TracingPlaneSpan log(long timestampMicroseconds, String event);
+        @Override public abstract TracingPlaneSpan log(String eventName, /* @Nullable */ Object payload);
+        @Override public abstract TracingPlaneSpan log(long timestampMicroseconds, String eventName, /* @Nullable */ Object payload);
+        @Override public abstract TracingPlaneSpan setOperationName(String operationName);
+
     }
 
     /**
@@ -268,8 +280,11 @@ public interface OpenTracingPlane {
          * 
          * The internal {@link #baggage} instance can now be consulted for parent IDs, etc., to create a new span.
          */
-        @Override
-        public abstract TracingPlaneSpan start();
+        @Override public abstract TracingPlaneSpan start();
+        @Override public abstract TracingPlaneSpanBuilder withTag(String key, String value);
+        @Override public abstract TracingPlaneSpanBuilder withTag(String key, boolean value);
+        @Override public abstract TracingPlaneSpanBuilder withTag(String key, Number value);
+        @Override public abstract TracingPlaneSpanBuilder withStartTimestamp(long microseconds);
 
     }
 
