@@ -3,16 +3,57 @@ package edu.brown.cs.systems.tracingplane.opentracing;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map.Entry;
+import edu.brown.cs.systems.tracingplane.opentracing.TracingPlanePropagation.Registry;
 import edu.brown.cs.systems.tracingplane.transit_layer.Baggage;
 import io.opentracing.References;
 import io.opentracing.Span;
 import io.opentracing.SpanContext;
+import io.opentracing.Tracer;
 import io.opentracing.Tracer.SpanBuilder;
+import io.opentracing.propagation.Format;
 
 /**
  * Extends OpenTracing interfaces with some baggage methods
  */
 public interface OpenTracingPlane {
+    
+    /** Contains the injectors and extractors used by TracingPlane tracers */
+    public static final class Propagation {
+        
+    }
+
+    /** A tracer that serializes the tracing plane baggage to bytes before handing over to extractors and injectors */
+    public abstract class TracingPlaneTracer implements Tracer {
+
+        protected final Registry registry;
+        
+        protected TracingPlaneTracer() {
+            this(TracingPlanePropagation.defaults());
+        }
+        
+        protected TracingPlaneTracer(Registry propagationRegistry) {
+            this.registry = propagationRegistry;
+        }
+
+        @Override
+        public abstract TracingPlaneSpanBuilder buildSpan(String spanName);
+
+        @Override
+        public final <C> SpanContext extract(Format<C> format, C carrier) {
+            Baggage baggage = Baggage.deserialize(registry.extract(format, carrier));
+            return TracingPlaneSpanContext.wrap(baggage);
+        }
+
+        @Override
+        public <C> void inject(SpanContext context, Format<C> format, C carrier) {
+            if (!(context instanceof TracingPlaneSpanContext)) {
+                throw new RuntimeException("TracingPlane is not compatible with unknown SpanContext " + context);
+            }
+            byte[] bytes = Baggage.serialize(((TracingPlaneSpanContext) context).baggage);
+            registry.inject(format, bytes, carrier);
+        }
+
+    }
 
     /**
      * An OpenTracing SpanContext that is backed by a TracingPlane Baggage object.
