@@ -166,11 +166,16 @@ public interface OpenTracingPlane {
         public TracingPlaneSpanContext context() {
             return TracingPlaneSpanContext.wrap(Baggage.branch(baggage));
         }
+        
+        public final TracingPlaneSpan mergeWith(Baggage other) {
+            baggage = Baggage.join(baggage, other);
+            return this;
+        }
 
         /**
          * @return the baggage carried in this span context without branching
          */
-        public final Baggage peekBaggage() {
+        public final Baggage baggage() {
             return baggage;
         }
 
@@ -192,7 +197,7 @@ public interface OpenTracingPlane {
         }
 
         @Override
-        public final Span setBaggageItem(String key, String value) {
+        public final TracingPlaneSpan setBaggageItem(String key, String value) {
             OpenTracingBaggage otb = OpenTracingBaggage.getFrom(baggage);
             if (otb == null) {
                 otb = new OpenTracingBaggage();

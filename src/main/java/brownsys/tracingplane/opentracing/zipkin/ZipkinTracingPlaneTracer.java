@@ -39,7 +39,7 @@ public class ZipkinTracingPlaneTracer extends TracingPlaneTracer {
         ctx.metadata.spanId = braveContext.spanId();
         ctx.metadata.parentId = braveContext.parentId();
         ctx.metadata.flags.debug = braveContext.debug();
-        ctx.metadata.flags.sampleAttempted = braveContext.sampled() == null;
+        ctx.metadata.flags.sampleAttempted = braveContext.sampled() != null;
         ctx.metadata.flags.sampled = braveContext.sampled() == null ? false : braveContext.sampled();
         return ctx;
     }
