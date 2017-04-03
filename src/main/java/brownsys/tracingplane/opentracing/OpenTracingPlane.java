@@ -17,11 +17,6 @@ import io.opentracing.propagation.Format;
  * Extends OpenTracing interfaces with some baggage methods
  */
 public interface OpenTracingPlane {
-    
-    /** Contains the injectors and extractors used by TracingPlane tracers */
-    public static final class Propagation {
-        
-    }
 
     /** A tracer that serializes the tracing plane baggage to bytes before handing over to extractors and injectors */
     public abstract class TracingPlaneTracer implements Tracer {

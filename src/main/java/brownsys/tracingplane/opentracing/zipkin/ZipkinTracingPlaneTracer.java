@@ -99,7 +99,7 @@ public class ZipkinTracingPlaneTracer extends TracingPlaneTracer {
                 return String.valueOf(fields.get("event"));
             } else {
                 return fields.entrySet().stream()
-                             .map(p -> String.format("%s=%s", p.getKey(), p.getValue()))
+                             .map(p -> String.format("%s=%s ", p.getKey(), p.getValue()))
                              .reduce("", String::concat);
             }
         }

@@ -170,6 +170,7 @@
 									<arg value="src/main/baggage/opentracing.bb" />
 									<arg value="src/main/baggage/htrace.bb" />
 									<arg value="src/main/baggage/zipkin.bb" />
+									<arg value="src/main/baggage/xipkin.bb" />
 								</exec>
 							</tasks>
 							<sourceRoot>target/generated-sources</sourceRoot>
